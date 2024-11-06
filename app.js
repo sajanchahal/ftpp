@@ -1,6 +1,5 @@
-// app.js
 require('dotenv').config(); // Load environment variables from .env file
-const { FTPClient } = require('basic-ftp');
+const ftp = require('basic-ftp');
 const fs = require('fs');
 const path = require('path');
 
@@ -14,7 +13,9 @@ const FTP_CONFIG = {
 
 // Function to list files and directories
 async function listFiles() {
-  const client = new FTPClient();
+  const client = new ftp.Client(); // Corrected method to initialize FTPClient
+  client.ftp.verbose = true; // Optional: Enable verbose logging
+
   try {
     await client.access({
       host: FTP_CONFIG.host,
@@ -41,7 +42,9 @@ async function listFiles() {
 
 // Function to download a file
 async function downloadFile(remoteFilePath, localFilePath) {
-  const client = new FTPClient();
+  const client = new ftp.Client();
+  client.ftp.verbose = true;
+
   try {
     await client.access({
       host: FTP_CONFIG.host,
