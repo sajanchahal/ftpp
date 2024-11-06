@@ -1,0 +1,15 @@
+{
+  "name": "my-ftp-app",
+  "version": "1.0.0",
+  "description": "Node.js FTP client to list and download files",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "basic-ftp": "^4.6.0",
+    "dotenv": "^10.0.0"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}
