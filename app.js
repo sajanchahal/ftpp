@@ -11,9 +11,12 @@ const FTP_CONFIG = {
   port: 21,
 };
 
-// Function to list files and directories
-async function listFiles() {
-  const client = new ftp.Client(); // Corrected method to initialize FTPClient
+// Video file extensions you want to process
+const videoExtensions = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv'];
+
+// Function to list video files
+async function listVideoFiles() {
+  const client = new ftp.Client();
   client.ftp.verbose = true; // Optional: Enable verbose logging
 
   try {
@@ -27,12 +30,18 @@ async function listFiles() {
     console.log('Connected to the FTP server.');
     // List the files and directories in the root directory
     const fileList = await client.list('/');
-    console.log('Files and folders on the server:');
-    fileList.forEach(file => {
+
+    console.log('Video files on the server:');
+    const videoFiles = fileList.filter(file => {
+      const ext = path.extname(file.name).toLowerCase();
+      return videoExtensions.includes(ext);
+    });
+
+    videoFiles.forEach(file => {
       console.log(file.name);
     });
 
-    return fileList; // Return file/folder list for further operations (e.g., downloading)
+    return videoFiles; // Return the filtered list of video files
   } catch (err) {
     console.error('Error listing files:', err);
   } finally {
@@ -40,8 +49,8 @@ async function listFiles() {
   }
 }
 
-// Function to download a file
-async function downloadFile(remoteFilePath, localFilePath) {
+// Function to download a video file
+async function downloadVideoFile(remoteFilePath, localFilePath) {
   const client = new ftp.Client();
   client.ftp.verbose = true;
 
@@ -53,7 +62,7 @@ async function downloadFile(remoteFilePath, localFilePath) {
       port: FTP_CONFIG.port,
     });
 
-    console.log(`Downloading file: ${remoteFilePath}`);
+    console.log(`Downloading video file: ${remoteFilePath}`);
     await client.downloadTo(localFilePath, remoteFilePath);
     console.log(`File downloaded to: ${localFilePath}`);
   } catch (err) {
@@ -65,13 +74,13 @@ async function downloadFile(remoteFilePath, localFilePath) {
 
 // Example usage:
 async function main() {
-  const fileList = await listFiles();
+  const videoFiles = await listVideoFiles();
 
-  // If you want to download a file, for example the first file in the list:
-  if (fileList.length > 0) {
-    const remoteFile = fileList[0].name; // Select the first file in the list
+  // If you want to download a video file, for example the first video in the list:
+  if (videoFiles.length > 0) {
+    const remoteFile = videoFiles[0].name; // Select the first video file in the list
     const localPath = path.join(__dirname, remoteFile); // Local path to save the file
-    await downloadFile(remoteFile, localPath);
+    await downloadVideoFile(remoteFile, localPath);
   }
 }
 
